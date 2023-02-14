@@ -1,8 +1,5 @@
 name: Simple Pico Green Clock build
-on:
-  push:
-    branches:
-    - main
+on: push
 
 jobs:
   build:
