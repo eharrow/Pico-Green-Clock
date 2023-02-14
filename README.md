@@ -1,6 +1,6 @@
 # Pico Green Clock
 Firmware Version 8.02 released 21-JAN-2023
-
+dsfsdf
 Firmware Hilights:
 
 - Version 8.02 fix a bug with day-of-week logic.
