@@ -431,6 +431,8 @@
 #define CHIME_HALF_HOUR  FLAG_ON         // if "FLAG_ON", will sound a "double-beep" on half-hour (every xxh30), compliant to chime settings above.
 #define CHIME_HOUR_COUNT FLAG_ON         // if "FLAG_ON", hourly chime will beep a number of times equivalent to the hour value in 12-hour format.
 #define CHIME_HOUR_COUNT_BEEP_DURATION 300  // duration of "hour count" beeps (in msec) when flag above is On.
+#define CHIME_HOUR_COUNT_SLEEP_DURATION 1000 - CHIME_HOUR_COUNT_BEEP_DURATION  // duration of "hour count" beeps (in msec) when flag above is On.
+
 /* NOTE: See also revision history above (or User guide) about "night time workers" support for hourly chime. */
 
 /* For active buzzer integrated in Pico Green Clock. Number of "tones" for each "sound pack" (first level of repetition). */
@@ -16329,7 +16331,7 @@ bool timer_callback_s(struct repeating_timer *TimerSec)
         for (Loop1UInt8 = 0; Loop1UInt8 < Dum1UInt8; ++Loop1UInt8)
         {
           sound_queue_active(CHIME_HOUR_COUNT_BEEP_DURATION, 1);
-          sound_queue_active(700, SILENT);
+          sound_queue_active(CHIME_HOUR_COUNT_SLEEP_DURATION, SILENT);
         }
       }
       else
