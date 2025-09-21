@@ -296,7 +296,7 @@
 #define NETWORK_PASSWORD "MyPassword"     /// first date scrolling (credentials will be saved to flash), then erase the credentials and put comment on both lines.
 
 /* If a Pico W is used, librairies for Wi-Fi and NTP synchronization will be merged in the executable. If PICO_W is not defined, NTP is automatically disabled. */
-#define PICO_W  ///
+#define PICO  ///
 
 /* Flag to handle automatically the daylight saving time. List of countries are given in the User Guide. */
 #define DST_COUNTRY DST_NORTH_AMERICA
@@ -450,8 +450,9 @@
 #define CHIME_TIME_ON          9         // if "CHIME_DAY", "hourly chime" and "calendar event" will sound beginning at this time (in the morning).
 #define CHIME_TIME_OFF        21         // if "CHIME_DAY", "hourly chime" and "calendar event" will sound for the last time at this time (in the evening).
 #define CHIME_HALF_HOUR  FLAG_ON         // if "FLAG_ON", will sound a "double-beep" on half-hour (every xxh30), compliant to chime settings above.
-#define CHIME_HOUR_COUNT FLAG_OFF        // if "FLAG_ON", hourly chime will beep a number of times equivalent to the hour value in 12-hour format.
-#define CHIME_HOUR_COUNT_BEEP_DURATION 300  // duration of "hour count" beeps (in msec) when flag above is On.
+#define CHIME_HOUR_COUNT FLAG_ON         // if "FLAG_ON", hourly chime will beep a number of times equivalent to the hour value in 12-hour format.
+#define CHIME_HOUR_COUNT_BEEP_DURATION 100  // duration of "hour count" beeps (in msec) when flag above is On.
+#define CHIME_HOUR_COUNT_SLEEP_DURATION 1000 - CHIME_HOUR_COUNT_BEEP_DURATION  // duration of "hour count" beeps (in msec) when flag above is On.
 /* NOTE: See also revision history above (or User guide) about "night time workers" support for hourly chime. */
 
 /* For active buzzer integrated in Pico Green Clock. Number of "tones" for each "sound pack" (first level of repetition). */
@@ -17634,11 +17635,14 @@ bool timer_callback_s(struct repeating_timer *TimerSec)
         /* Number of "beeps" correspond to hour value in 12-hour format. */
         Dum1UInt8 = CurrentHour;
         if (CurrentHour > 12) Dum1UInt8 -= 12;
-        for (Loop1UInt8 = 0; Loop1UInt8 < Dum1UInt8; ++Loop1UInt8)
+        // beep for the number of hours up to the last
+        for (Loop1UInt8 = 0; Loop1UInt8 < Dum1UInt8 - 1; ++Loop1UInt8)
         {
           sound_queue_active(CHIME_HOUR_COUNT_BEEP_DURATION, 1);
-          sound_queue_active(CHIME_HOUR_COUNT_BEEP_DURATION, SILENT);
+          sound_queue_active(CHIME_HOUR_COUNT_SLEEP_DURATION, SILENT);
         }
+        // the final beep should be longer
+        sound_queue_active(CHIME_HOUR_COUNT_BEEP_DURATION * 5, 1);
       }
       else
       {
